@@ -18,7 +18,7 @@
 %This block of code defines the information to appear in the
 %Title page
 \title[] % (optional)
-{Predição da geração de energia utilizando dados climáticos}
+{Predição da Geração de Energia Utilizando Dados Climáticos}
 
 \author[Vitor~Oliveira~Ropke] % (optional)
 {
@@ -40,7 +40,6 @@
 %End of title page configuration block
 %------------------------------------------------------------
 
-
 \begin{document}
 
 %Hide the navigation buttons
@@ -57,11 +56,11 @@
 
 %---------------------------------------------------------
 \begin{frame}
-\frametitle{Mudanças climáticas}
+\frametitle{Mudanças Climáticas}
 \begin{itemize}
-    \item Baseado no modelo aditivo
-    \item Funciona melhor com dados sazonais
-    \item Trata dados faltantes, mudanças de padrões e outliers
+    \item Alteração dos padrões climáticos
+    \item Anomalia de precipitação, chuva e radiação solar
+    \item Impacta o setor elétrico dos países
 \end{itemize}
 \end{frame}
 %---------------------------------------------------------
@@ -70,15 +69,9 @@
 %---------------------------------------------------------
 \begin{frame}
 \frametitle{Sistema Interligado Nacional (SIN)}
-\begin{equation}
-    y(t) = g(t) + s(t) + h(t) + \epsilon_t
-\end{equation}
 \begin{itemize}
-    \item $y(t)$: Função resultante.
-    \item $g(t)$: Função de tendência.
-    \item $s(t)$: Função de sazonalidade.
-    \item $h(t)$: Função de feriados.
-    \item $\epsilon_t$: Mudanças idiossincráticas.
+    \item Centraliza geração e distribuição de energia
+    \item Possui suas vantagens e desvantagens
 \end{itemize}
 \end{frame}
 %---------------------------------------------------------
@@ -86,11 +79,11 @@
 
 %---------------------------------------------------------
 \begin{frame}
-\frametitle{Componentes}
+\frametitle{Sistema Interligado Nacional (SIN)}
 \begin{figure}
     \centering
-    \includegraphics[width=0.6\linewidth]{componentes-modelo-aditivo.pdf}
-    \caption{Componentes de um Modelo Aditivo}
+    \includegraphics[width=0.5\linewidth]{matriz-energetica.pdf}
+    \caption{Matriz Energética Brasileira no Dia 30 de Novembro de 2024}
 \end{figure}
 \end{frame}
 %---------------------------------------------------------
@@ -98,17 +91,60 @@
 
 %---------------------------------------------------------
 \begin{frame}
-\frametitle{Tendência}
-A incerteza da previsão é definida através da seguinte equação:
+\frametitle{Objetivo}
+Identificar possíveis momentos críticos de geração de energia.
+\end{frame}
+%---------------------------------------------------------
 
-\begin{equation}
-    \lambda = \frac{1}{S} \sum_{j=1}^S |\delta_j|
-\end{equation}
 
+\section{Metodologia}
+
+
+%---------------------------------------------------------
+\begin{frame}
+\frametitle{Estratégia}
+
+\begin{columns}
+    \column{0.48\textwidth}
+    
+    \begin{block}{1ª etapa}
+    Predição dos elementos climáticos usando o Prophet.
+    \vspace{5.4mm}
+    \begin{itemize}
+        \item Chuva
+        \vspace{5.4mm}
+        \item Sol
+        \vspace{5.4mm}
+        \item Vento
+    \end{itemize}
+    \end{block}
+
+    \column{0.48\textwidth}
+    
+    \begin{block}{2ª etapa}
+    Predição da geração e do consumo de energia usando o NeuralProphet.
+    \begin{itemize}
+        \item Geração hidráulica -- Chuva
+        \item Geração fotovoltaica -- Sol
+        \item Geração eólica -- Vento
+        \item Geração térmica
+        \item Consumo
+    \end{itemize}
+    \end{block}
+\end{columns}
+
+\end{frame}
+%---------------------------------------------------------
+
+
+%---------------------------------------------------------
+\begin{frame}
+\frametitle{Coleta de Dados}
+3 datasets
 \begin{itemize}
-    \item $\lambda$: Incerteza da previsão.
-    \item $S$: Número de mudanças na tendência.
-    \item $|\delta_j|$: Valor da mudança na tendência.
+    \item Elementos climáticos
+    \item Capacidade de geração
+    \item Geração e consumo
 \end{itemize}
 \end{frame}
 %---------------------------------------------------------
@@ -116,12 +152,246 @@ A incerteza da previsão é definida através da seguinte equação:
 
 %---------------------------------------------------------
 \begin{frame}
-\frametitle{Tendência}
+\frametitle{Coleta de Dados - Elementos Climáticos}
+\begin{itemize}
+    \item \href{https://portal.inmet.gov.br/dadoshistoricos}{portal.inmet.gov.br/dadoshistoricos}
+    \begin{columns}
+        \column{0.5\textwidth}
+        \begin{figure}
+            \centering
+            \includegraphics[width=0.7\linewidth]{pastas-inmet.png}
+        \end{figure}
+    
+        \column{0.5\textwidth}
 
+        \begin{figure}
+            \centering
+            \includegraphics[width=0.7\linewidth]{estacoes-inmet.png}
+        \end{figure}
+    \end{columns}
+    \item \href{https://bdmep.inmet.gov.br}{bdmep.inmet.gov.br}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.4\linewidth]{estacoes-bdmep.png}
+    \end{figure}
+\end{itemize}
+\end{frame}
+%---------------------------------------------------------
+
+
+%---------------------------------------------------------
+\begin{frame}
+\frametitle{Coleta de Dados - Elementos Climáticos}
+\begin{itemize}
+    \item Dados horários
+    \item 19 colunas (\href{https://portal.inmet.gov.br/dadoshistoricos}{INMET DADOS HISTÓRICOS ANUAIS})
+    \item 5 colunas (\href{https://bdmep.inmet.gov.br}{INMET::BDMEP})
+    \begin{itemize}
+        \item \texttt{Data Medicao}
+        \item \texttt{Hora Medicao}
+        \item \texttt{PRECIPITACAO TOTAL, HORARIO(mm)}
+        \item \texttt{RADIACAO GLOBAL(Kj/m²)}
+        \item \texttt{VENTO, VELOCIDADE HORARIA(m/s)}
+    \end{itemize}
+    \item 634 estações meteorológicas (\href{https://portal.inmet.gov.br/dadoshistoricos}{INMET DADOS HISTÓRICOS ANUAIS})
+    \item 602 estações meteorológicas (\href{https://bdmep.inmet.gov.br}{INMET::BDMEP})
+\end{itemize}
+\end{frame}
+%---------------------------------------------------------
+
+
+%---------------------------------------------------------
+\begin{frame}
+\frametitle{Coleta de Dados - Capacidade de Geração}
+\begin{itemize}
+    \item \href{https://dados.ons.org.br/dataset/capacidade-geracao}{dados.ons.org.br/dataset/capacidade-geracao}
+    \item Dados diários
+    \item 17 colunas (4 selecionadas)
+    \begin{itemize}
+        \item \texttt{nom\char`_tipousina}
+        \item \texttt{dat\char`_entradaoperacao}
+        \item \texttt{dat\char`_desativacao}
+        \item \texttt{val\char`_potenciaefetiva}
+    \end{itemize}
+    \item 1 arquivo
+    \item 5.201 linhas
+\end{itemize}
+\end{frame}
+%---------------------------------------------------------
+
+
+%---------------------------------------------------------
+\begin{frame}
+\frametitle{Coleta de Dados - Geração e Consumo}
+\begin{itemize}
+    \item \href{https://dados.ons.org.br/dataset/balanco-energia-subsistema}{dados.ons.org.br/dataset/balanco-energia-subsistema}
+    \begin{figure}
+        \centering
+        \includegraphics[width=0.6\linewidth]{arquivos-geracao-consumo.png}
+    \end{figure}
+\end{itemize}
+\end{frame}
+%---------------------------------------------------------
+
+
+%---------------------------------------------------------
+\begin{frame}
+\frametitle{Coleta de Dados - Geração e Consumo}
+\begin{itemize}
+    \item Dados horários
+    \item 9 colunas (7 selecionadas)
+    \begin{itemize}
+        \item \texttt{nom\char`_subsistema}
+        \item \texttt{din\char`_instante}
+        \item \texttt{val\char`_gerhidraulica}
+        \item \texttt{val\char`_gertermica}
+        \item \texttt{val\char`_gereolica}
+        \item \texttt{val\char`_gersolar}
+        \item \texttt{val\char`_carga}
+    \end{itemize}
+    \item 25 arquivos
+    \item 43.916 linhas, cada
+\end{itemize}
+\end{frame}
+%---------------------------------------------------------
+
+
+%---------------------------------------------------------
+\begin{frame}
+\frametitle{Processamento de Dados - Elementos Climáticos}
+\begin{itemize}
+    \item Seleção de estações meteorológicas com no mínimo 30\% de dados válidos
+    \item Seleção de estações meteorológicas com no mínimo 2 anos (730 dias) de dados
+    \item 582 estações meteorológicas com predição feita
+    \item Dados horários reamostrados para dados diários, fazendo a média dos valores horários
+    \item Dados diários de 6 de Maio de 2000 até 30 de Novembro de 2024
+\end{itemize}
+\end{frame}
+%---------------------------------------------------------
+
+
+%---------------------------------------------------------
+\begin{frame}
+\frametitle{Processamento de Dados - Elementos Climáticos}
+\begin{table}[ht]
+    \centering
+    \begin{tabular}{l c c c}
+        \hline
+        data & chuva & sol & vento \\
+        \hline
+        2000-05-06 & 0.01837 & 1278.09386 & 2.35468 \\
+        2000-05-07 & 0.02028 & 1295.12063 & 2.33444 \\
+        2000-05-08 & 0.01546 & 1269.16514 & 2.33220 \\
+        2000-05-09 & 0.00931 & 1288.86107 & 2.33925 \\
+        \hline
+    \end{tabular}
+    \caption{Amostra dos Dados Climáticos}
+\end{table}
+\end{frame}
+%---------------------------------------------------------
+
+
+%---------------------------------------------------------
+\begin{frame}
+\frametitle{Processamento de Dados - Capacidade de Geração}
+\begin{itemize}
+    \item Dados inicialmente classificados por usina
+    \item Cada usina possui data de início de operação e pode ter data de fim de operação
+    \item Iteração diária de 6 de Maio de 2000 até 30 de Novembro de 2024
+    \item Soma da potência de cada usina de acordo com o tipo e a data de início e fim de operação
+    \item Resulta em uma tabela com a capacidade de geração diária de cada tipo de energia
+\end{itemize}
+\end{frame}
+%---------------------------------------------------------
+
+
+%---------------------------------------------------------
+\begin{frame}
+\frametitle{Processamento de Dados - Capacidade de Geração}
+\begin{itemize}
+    \item 7 colunas
+    \begin{itemize}
+        \item \texttt{data}
+        \item \texttt{potencia\char`_total}
+        \item \texttt{potencia\char`_hidraulica}
+        \item \texttt{potencia\char`_termica}
+        \item \texttt{potencia\char`_eolica}
+        \item \texttt{potencia\char`_solar}
+        \item \texttt{potencia\char`_nuclear}
+    \end{itemize}
+\end{itemize}
+\end{frame}
+%---------------------------------------------------------
+
+
+%---------------------------------------------------------
+\begin{frame}
+\frametitle{Processamento de Dados - Capacidade de Geração}
+\begin{table}[ht]
+    \centering
+    \resizebox{\columnwidth}{!}{%
+        \begin{tabular}{l c c c c c r}
+            \hline
+            data & potencia\_total & potencia\_hidraulica & potencia\_termica & potencia\_eolica & potencia\_solar & potencia\_nuclear \\
+            \hline
+            2000-05-06 & 68682.88600 & 63756.91999 & 4285.96599 & 0.0 & 0.0 & 640.0 \\
+            2000-05-07 & 68682.88600 & 63756.91999 & 4285.96599 & 0.0 & 0.0 & 640.0 \\
+            2000-05-08 & 68682.88600 & 63756.91999 & 4285.96599 & 0.0 & 0.0 & 640.0 \\
+            2000-05-09 & 68682.88600 & 63756.91999 & 4285.96599 & 0.0 & 0.0 & 640.0 \\
+            \hline
+        \end{tabular}%
+    }
+    \caption{Amostra dos Dados da Capacidade de Geração}
+\end{table}
+\end{frame}
+%---------------------------------------------------------
+
+
+%---------------------------------------------------------
+\begin{frame}
+\frametitle{Processamento de Dados - Geração e Consumo}
+\begin{itemize}
+    \item Seleção de linhas onde \texttt{SISTEMA INTERLIGADO NACIONAL} é o valor em \texttt{nom\char`_subsistema}
+    \item Dados horários reamostrados para dados diários, fazendo a média dos valores horários
+    \item Dados diários de 6 de Maio de 2000 até 30 de Novembro de 2024
+\end{itemize}
+\end{frame}
+%---------------------------------------------------------
+
+
+%---------------------------------------------------------
+\begin{frame}
+\frametitle{Processamento de Dados - Geração e Consumo}
+\begin{table}[ht]
+    \centering
+    \resizebox{\columnwidth}{!}{%
+        \begin{tabular}{l c c c c r}
+            \hline
+            data & val\_gerhidraulica & val\_gertermica & val\_gereolica & potencia\_gersolar & potencia\_carga \\
+            \hline
+            2000-05-06 & 37575.91666 & 1785.445833 & 0.0 & 0.0 & 39408.67916 \\
+            2000-05-07 & 32997.02083 & 1706.8875 & 0.0 & 0.0 & 34751.125 \\
+            2000-05-08 & 39447.27083 & 1825.325 & 0.0 & 0.0 & 41444.38333 \\
+            2000-05-09 & 40412.70833 & 1786.9375 & 0.0 & 0.0 & 42356.49166 \\
+            \hline
+        \end{tabular}%
+    }
+    \caption{Amostra dos Dados de Geração e Consumo}
+\end{table}
+\end{frame}
+%---------------------------------------------------------
+
+
+\section{Resultados}
+
+
+%---------------------------------------------------------
+\begin{frame}
+\frametitle{Predição dos Elementos Climáticos}
 \begin{figure}
     \centering
-    \includegraphics[width=0.8\linewidth]{tendencia.png}
-    \caption{Tendência em uma Série Temporal}
+    \includegraphics[width=0.9\linewidth]{chuva.pdf}
+    \caption{Evolução da Chuva ao Longo dos Anos}
 \end{figure}
 \end{frame}
 %---------------------------------------------------------
@@ -129,28 +399,11 @@ A incerteza da previsão é definida através da seguinte equação:
 
 %---------------------------------------------------------
 \begin{frame}
-\frametitle{Sazonalidade}
-A sazonalidade é feita a partir da série de Fourier, dada na seguinte equação:
-
-\begin{equation}
-    s(t) = \sum_{n=1}^N \left( a_n cos \left( \frac{2 \pi nt}{P} \right) + b_n sin \left( \frac{2 \pi nt}{P} \right) \right)
-\end{equation}
-
-\begin{itemize}
-    \item $N$: Número de termos de Fourier (filtro passa-baixa).
-    \item $P$: Regularidade do período em número de dias.
-\end{itemize}
-\end{frame}
-%---------------------------------------------------------
-
-
-%---------------------------------------------------------
-\begin{frame}
-\frametitle{Sazonalidade}
+\frametitle{Predição dos Elementos Climáticos}
 \begin{figure}
     \centering
-    \includegraphics[width=0.6\linewidth]{fourier.png}
-    \caption{Séries de Fourier}
+    \includegraphics[width=0.9\linewidth]{sol.pdf}
+    \caption{Evolução da Radiação Solar ao Longo dos Anos}
 \end{figure}
 \end{frame}
 %---------------------------------------------------------
@@ -158,77 +411,11 @@ A sazonalidade é feita a partir da série de Fourier, dada na seguinte equaçã
 
 %---------------------------------------------------------
 \begin{frame}
-\frametitle{Sazonalidade}
-
+\frametitle{Predição dos Elementos Climáticos}
 \begin{figure}
     \centering
-    \includegraphics[width=0.4\linewidth]{sazonalidade.png}
-    \caption{Sazonalidade de uma Série Temporal}
-\end{figure}
-\end{frame}
-%---------------------------------------------------------
-
-
-\section{Modelo Híbrido}
-
-
-%---------------------------------------------------------
-\begin{frame}
-\frametitle{NeuralProphet}
-\begin{itemize}
-    \item Além de redes neurais, utiliza outros modelos de \textit{deep learning}
-    \item É uma extensão do Prophet
-\end{itemize}
-\end{frame}
-%---------------------------------------------------------
-
-
-%---------------------------------------------------------
-\begin{frame}
-\frametitle{Componentes}
-\begin{equation}
-    \hat{y}(t) = T(t) + S(t) + E(t) + F(t) + A(t) + L(t)
-\end{equation}
-\begin{itemize}
-    \item $\hat{y}(t)$: Valores preditos.
-    \item $T(t)$: Função de tendência.
-    \item $S(t)$: Função de sazonalidade.
-    \item $E(t)$: Função de eventos e feriados.
-    \item $F(t)$: Efeitos de regressão para variáveis externas com futuro conhecido.
-    \item $A(t)$: Efeitos de auto-regressão baseados nas observações passadas.
-    \item $L(t)$: Efeitos de regressão para as últimas observações de variáveis exógenas.
-\end{itemize}
-\end{frame}
-%---------------------------------------------------------
-
-
-%---------------------------------------------------------
-\begin{frame}
-\frametitle{Auto-regressão}
-O cálculo de valores futuros é feito usando a seguinte equação:
-
-\begin{equation}
-    y_t = c + \sum_{i=1}^{i=p} \theta_i \cdot y_{t-i} + \epsilon_t
-\end{equation}
-\begin{itemize}
-    \item $y_t$: Valor predito.
-    \item $p$: Número de valores passados.
-    \item $\theta_i$: Coeficiente a direção e magnitude do valor passado $i$.
-    \item $c$: Interceptor.
-    \item $\epsilon_t$: Ruído branco.
-\end{itemize}
-\end{frame}
-%---------------------------------------------------------
-
-
-%---------------------------------------------------------
-\begin{frame}
-\frametitle{Auto-regressão}
-
-\begin{figure}
-    \centering
-    \includegraphics[width=0.8\linewidth]{auto-regressao.png}
-    \caption{Auto-regressão comparado com valores reais}
+    \includegraphics[width=0.9\linewidth]{vento.pdf}
+    \caption{Evolução da Velocidade do Vento ao Longo dos Anos}
 \end{figure}
 \end{frame}
 %---------------------------------------------------------
@@ -236,28 +423,11 @@ O cálculo de valores futuros é feito usando a seguinte equação:
 
 %---------------------------------------------------------
 \begin{frame}
-\frametitle{Regressores defasados (\textit{Lagged Regressors})}
-Usado para correlacionar outras variáveis (covariáveis) com o target, seguindo a equação:
-
-\begin{equation}
-    L(t) = \sum_{x \in \mathbb{X}} L_x (x_{t-1}, x_{t-2}, \cdots, x_{t-p})
-\end{equation}
-\begin{itemize}
-    \item $L(t)$: Valor defasado.
-    \item $\mathbb{X}$: Conjunto das covariáveis.
-    \item $x$: Valor da covariável.
-\end{itemize}
-\end{frame}
-%---------------------------------------------------------
-
-
-%---------------------------------------------------------
-\begin{frame}
-\frametitle{Regressores defasados (\textit{Lagged Regressors})}
+\frametitle{Capacidade de Geração}
 \begin{figure}
     \centering
-    \includegraphics[width=0.7\linewidth]{regressores-defasados.png}
-    \caption{Covariável e target}
+    \includegraphics[width=0.6\linewidth]{capacidade-geracao.pdf}
+    \caption{Evolução da Capacidade de Geração ao Longo dos Anos}
 \end{figure}
 \end{frame}
 %---------------------------------------------------------
@@ -265,29 +435,57 @@ Usado para correlacionar outras variáveis (covariáveis) com o target, seguindo
 
 %---------------------------------------------------------
 \begin{frame}
-\frametitle{Regressores do futuro}
-Covariáveis com futuro conhecido, seguindo a equação:
+\frametitle{Geração e Consumo}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\linewidth]{geracao-consumo.pdf}
+    \caption{Evolução da Geração e do Consumo ao Longo dos Anos}
+\end{figure}
+\end{frame}
+%---------------------------------------------------------
 
-\begin{equation}
-    F(t) = \sum_{f \in \mathbb{F}} F_f^\star(t)
-\end{equation}
+
+
+%---------------------------------------------------------
+\begin{frame}
+\frametitle{Capacidade, Geração e Consumo}
+\begin{figure}
+    \centering
+    \includegraphics[width=0.6\linewidth]{capacidade-geracao-consumo.pdf}
+    \caption{Comparação da Capacidade de Geração com a Geração e Consumo}
+\end{figure}
+\end{frame}
+%---------------------------------------------------------
+
+
+\section{Discussões}
+
+
+%---------------------------------------------------------
+\begin{frame}
+\frametitle{Conclusões}
 \begin{itemize}
-    \item $F(t)$: Efeito de todos os regressores.
-    \item $\mathbb{F}$: Conjunto das covariáveis com futuro conhecido.
-    \item $f$: Regressor.
+    \item Prophet e NeuralProphet conseguem fazer as predições mesmo sem ajustar os parâmetros
+    \item Resultados mostram que o consumo passa pela geração total por volta de 2080
 \end{itemize}
 \end{frame}
 %---------------------------------------------------------
 
 
 %---------------------------------------------------------
-\begin{frame}
-\frametitle{Regressores do futuro}
-\begin{figure}
-    \centering
-    \includegraphics[width=0.7\linewidth]{regressores-futuro.png}
-    \caption{Covariável e target}
-\end{figure}
+\begin{frame}[allowframebreaks]
+\frametitle{Trabalhos Futuros}
+\begin{itemize}
+    \item Ajustar os parâmetros
+    \item Diminuir a tolerância para valores nulos e zerados
+    \item Considerar correlações entre os tipos de geração e os elementos climáticos
+    \begin{itemize}
+        \item Considerar efeitos da chuva sobre a geração solar e eólica
+        \item Considerar efeitos do sol sobre a geração hidrelétrica e eólica
+        \item Considerar efeitos do vento sobre a geração hidrelétrica e solar
+    \end{itemize}
+    \item Considerar a geolocalização das usinas e das estações meteorológicas
+\end{itemize}
 \end{frame}
 %---------------------------------------------------------
 
